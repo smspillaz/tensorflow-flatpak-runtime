@@ -1,0 +1,11 @@
+--- postinst	2014-03-25 12:32:52.000000000 +0800
++++ postinst	2018-04-18 08:48:02.564328771 +0800
+@@ -39,7 +39,7 @@ setup_path()
+ first_install()
+ {
+     if which dpkg-query >/dev/null; then
+-    nsspkg=$(dpkg-query -L "$(nsslib_name)" | sed -n 's,\(.*\)/libnss3\.so$,\1,p'|head -n 1)
++    nsspkg=/usr/lib
+     nsscfg=/etc/${jvm%-$arch}/security/nss.cfg
+     nssjdk=$(test ! -f $nsscfg || sed -n '/nssLibraryDirectory/s/.*= *\(.*\)/\1/p' $nsscfg)
+     if [ -n "$nsspkg" ] && [ -n "$nssjdk" ] && [ "$nsspkg" != "$nssjdk" ]; then

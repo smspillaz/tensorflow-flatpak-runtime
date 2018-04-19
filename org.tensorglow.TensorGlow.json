@@ -1,0 +1,415 @@
+{
+    "id": "org.tensorglow.TensorGlow",
+    "runtime": "org.gnome.Sdk",
+    "runtime-version": "3.26",
+    "sdk": "org.gnome.Sdk",
+    "build-runtime": true,
+    "branch": "3.26",
+    "build-options": {
+        "cflags": "-O2 -g",
+        "cxxflags": "-O2 -g",
+        "env": {
+            "V": "1"
+        },
+        "strip": false,
+        "no-debuginfo": true
+    },
+    "command": "/bin/sh",
+    "finish-args": [
+        "--share=ipc",
+        "--filesystem=xdg-run/dconf",
+        "--filesystem=~/.config/dconf:ro",
+        "--own-name=org.tensorglow.Tensorglow",
+        "--talk-name=ca.desrt.dconf",
+        "--env=DCONF_USER_CONFIG_DIR=.config/dconf",
+        "--command=/bin/sh"
+    ],
+    "modules": [
+        {
+            "name": "bin-java",
+            "buildsystem": "simple",
+            "sources": [
+                {
+                    "type": "file",
+                    "only-arches": ["i386"],
+                    "url": "http://snapshot.debian.org/archive/debian/20170824T035401Z/pool/main/o/openjdk-8/openjdk-8-jdk-headless_8u144-b01-1_i386.deb",
+                    "dest-filename": "openjdk-8-jdk-headless.deb",
+                    "sha256": "f649cb6d369e3df9637b29f36f5ed638aba61d8af09c6799d38b5cebbb5644b8"
+                },
+                {
+                    "type": "file",
+                    "only-arches": ["i386"],
+                    "url": "http://snapshot.debian.org/archive/debian/20170824T035401Z/pool/main/o/openjdk-8/openjdk-8-jre-headless_8u144-b01-1_i386.deb",
+                    "dest-filename": "openjdk-8-jre-headless.deb",
+                    "sha256": "fe5706efca245f0c99f28a4166898043582dcd1af61b0c57ecdc2e08d076aa19"
+                },
+                {
+                    "type": "file",
+                    "only-arches": ["aarch64"],
+                    "url": "http://snapshot.debian.org/archive/debian/20170824T035401Z/pool/main/o/openjdk-8/openjdk-8-jdk-headless_8u144-b01-1_arm64.deb",
+                    "dest-filename": "openjdk-8-jdk-headless.deb",
+                    "sha256": "c01b7394d3bf6a779ed297ff8e850fab3bb21007f8c5aafc0c963ddacf13d2a3"
+                },
+                {
+                    "type": "file",
+                    "only-arches": ["aarch64"],
+                    "url": "http://snapshot.debian.org/archive/debian/20170824T035401Z/pool/main/o/openjdk-8/openjdk-8-jre-headless_8u144-b01-1_arm64.deb",
+                    "dest-filename": "openjdk-8-jre-headless.deb",
+                    "sha256": "07e8dfcbab4e005b3d91203854562898142fa3bb45e3d306cfbafe71e8971478"
+                },
+                {
+                    "type": "file",
+                    "only-arches": ["arm"],
+                    "url": "http://snapshot.debian.org/archive/debian/20170826T213145Z/pool/main/o/openjdk-8/openjdk-8-jdk-headless_8u144-b01-1_armhf.deb",
+                    "dest-filename": "openjdk-8-jdk-headless.deb",
+                    "sha256": "9def80f9b513a82ef427d595b651f7ce9eb37dc621b1925dc2f3f0aa94734ff3"
+                },
+                {
+                    "type": "file",
+                    "only-arches": ["arm"],
+                    "url": "http://snapshot.debian.org/archive/debian/20170826T213145Z/pool/main/o/openjdk-8/openjdk-8-jre-headless_8u144-b01-1_armhf.deb",
+                    "dest-filename": "openjdk-8-jre-headless.deb",
+                    "sha256": "f93a6d5e3fafc48cee1b006eed51148c9f0f9a0b4a3d0c9c3414b769a38a56fd"
+                },
+                {
+                    "type": "file",
+                    "only-arches": ["x86_64"],
+                    "url": "http://snapshot.debian.org/archive/debian/20170824T160430Z/pool/main/o/openjdk-8/openjdk-8-jdk-headless_8u144-b01-1_amd64.deb",
+                    "dest-filename": "openjdk-8-jdk-headless.deb",
+                    "sha256": "23cde9e21132e6287b772b13b6dcd44183da6d01a3ef177030439ba855f0a73a"
+                },
+                {
+                    "type": "file",
+                    "only-arches": ["x86_64"],
+                    "url": "http://snapshot.debian.org/archive/debian/20170824T160430Z/pool/main/o/openjdk-8/openjdk-8-jre-headless_8u144-b01-1_amd64.deb",
+                    "dest-filename": "openjdk-8-jre-headless.deb",
+                    "sha256": "0e2fb572fa13a02df95fdfa2f9e004072c094ded519d57f7996fb984b95b2ca6"
+                }
+            ],
+            "build-commands": [
+                "ar vx openjdk-8-jre-headless.deb",
+                "tar xvf data.tar.xz",
+                "cp -dr usr/* $FLATPAK_DEST/",
+                "rm -rf usr",
+                "cp -dr etc/* $FLATPAK_DEST/etc/",
+                "rm -rf etc",
+                "ar vx openjdk-8-jdk-headless.deb",
+                "tar xvf data.tar.xz",
+                "cp -dr usr/* $FLATPAK_DEST/",
+                "rm -rf usr"
+            ]
+        },
+        {
+            "name": "bazel",
+            "buildsystem": "simple",
+            "build-commands": [
+                "unzip bazel.zip -d bazel-build",
+                "cd bazel-build; patch -p0 < ../bazel-specify-env.patch",
+                "cd bazel-build; JAVA_HOME=$FLATPAK_DEST/lib/jvm/java-1.8.0-openjdk-amd64/ PYTHONNOUSERSITE=1 HOME=/var ./compile.sh",
+                "mkdir -p $FLATPAK_DEST/bin",
+                "cp bazel-build/output/bazel $FLATPAK_DEST/bin/"
+            ],
+            "sources": [
+                {
+                    "type": "file",
+                    "url": "https://github.com/bazelbuild/bazel/releases/download/0.12.0/bazel-0.12.0-dist.zip",
+                    "dest-filename": "bazel.zip",
+                    "sha256": "3b3e7dc76d145046fdc78db7cac9a82bc8939d3b291e53a7ce85315feb827754"
+                },
+                {
+                    "type": "file",
+                    "path": "patches/bazel-specify-env.patch"
+                }
+            ]
+        },
+        {
+            "name": "numpy",
+            "buildsystem": "simple",
+            "build-commands": [
+                "ar vx numpy.deb",
+                "tar xJvf data.tar.xz",
+                "cp -dr usr/* $FLATPAK_DEST"
+            ],
+            "sources": [
+                {
+                    "type": "file",
+                    "only-arches": ["x86_64"],
+                    "url": "http://ftp.us.debian.org/debian/pool/main/p/python-numpy/python3-numpy_1.12.1-3_amd64.deb",
+                    "dest-filename": "numpy.deb",
+                    "sha256": "acb93bfe28f5928ec50baff5486f8a84ee675cebb3fbcaccb29492b2dcaa3424"
+                },
+                {
+                    "type": "file",
+                    "only-arches": ["i386"],
+                    "url": "http://ftp.us.debian.org/debian/pool/main/p/python-numpy/python3-numpy_1.12.1-3_i386.deb",
+                    "dest-filename": "numpy.deb",
+                    "sha256": "8ca5780c8caf3f50f945a2baae576af625659ac92f049b513e1a7bdb56783b28"
+                },
+                {
+                    "type": "file",
+                    "only-arches": ["armhf"],
+                    "url": "http://ftp.us.debian.org/debian/pool/main/p/python-numpy/python3-numpy_1.12.1-3_armhf.deb",
+                    "dest-filename": "numpy.deb",
+                    "sha256": "5b85ba86a8725157c0df6c73e22e18e83c8c323543ad72df6bc6698dd587b0b0"
+                },
+                {
+                    "type": "file",
+                    "only-arches": ["aarch64"],
+                    "url": "http://ftp.us.debian.org/debian/pool/main/p/python-numpy/python3-numpy_1.12.1-3_arm64.deb",
+                    "dest-filename": "numpy.deb",
+                    "sha256": "89ec62c5ecd5cd287dec7c7bb55b589260616af922a234d421f49b33954b88b9"
+                }
+            ]
+        },
+        {
+            "name": "debianutils",
+            "buildsystem": "simple",
+            "build-commands": [
+                "ar vx debianutils.deb",
+                "tar xJvf data.tar.xz",
+                "cp -dr bin/* $FLATPAK_DEST/bin/",
+                "cp -dr usr/bin/* $FLATPAK_DEST/bin/",
+                "cp -dr usr/sbin/* $FLATPAK_DEST/sbin/",
+                "cp -dr usr/share/* $FLATPAK_DEST/share/"
+            ],
+            "sources": [
+                {
+                    "type": "file",
+                    "only-arches": ["x86_64"],
+                    "url": "http://ftp.us.debian.org/debian/pool/main/d/debianutils/debianutils_4.8.4_amd64.deb",
+                    "dest-filename": "debianutils.deb",
+                    "sha256": "b4f33dae10c210355290bd69a746ea67d3129a5e9c4cd8eb49d7ff60552a4bb8"
+                },
+                {
+                    "type": "file",
+                    "only-arches": ["i386"],
+                    "url": "http://ftp.us.debian.org/debian/pool/main/d/debianutils/debianutils_4.8.4_i386.deb",
+                    "dest-filename": "debianutils.deb",
+                    "sha256": "81544542c9f3b6ef17f418b1b70fc89805f54ac08ff030388cb563432c43ec7c"
+                },
+                {
+                    "type": "file",
+                    "only-arches": ["armhf"],
+                    "url": "http://ftp.us.debian.org/debian/pool/main/d/debianutils/debianutils_4.8.4_armhf.deb",
+                    "dest-filename": "debianutils.deb",
+                    "sha256": "5a23db09582381b87738de76d5759ec05d505269017a87a4c607e0205b0a0b0e"
+                },
+                {
+                    "type": "file",
+                    "only-arches": ["aarch64"],
+                    "url": "http://ftp.us.debian.org/debian/pool/main/d/debianutils/debianutils_4.8.4_arm64.deb",
+                    "dest-filename": "debianutils.deb",
+                    "sha256": "4b17273315d4d216c61026e62fc3b172684e7fd3808d3bd1da38e38e8fc45299"
+                }
+            ]
+        },
+        {
+            "name": "dpkg",
+            "buildsystem": "simple",
+            "build-commands": [
+                "ar vx dpkg.deb",
+                "tar xJvf data.tar.xz",
+                "cp -dr etc/* $FLATPAK_DEST/etc/",
+                "cp -dr sbin/* $FLATPAK_DEST/sbin/",
+                "cp -dr usr/bin/* $FLATPAK_DEST/bin/",
+                "cp -dr usr/share/dpkg $FLATPAK_DEST/share/dpkg",
+                "cp -dr usr/share/lintian $FLATPAK_DEST/share/lintian",
+                "cp -dr usr/share/polkit-1 $FLATPAK_DEST/share/polkit-1",
+                "cp -dr var/* /var/",
+                "touch /var/lib/dpkg/status"
+            ],
+            "sources": [
+                {
+                    "type": "file",
+                    "only-arches": ["x86_64"],
+                    "url": "http://ftp.us.debian.org/debian/pool/main/d/dpkg/dpkg_1.19.0.5_amd64.deb",
+                    "dest-filename": "dpkg.deb",
+                    "sha256": "ef557b690aa6486758d1e55d1be7a65bcc9a40a32cba45f2cf44bb7bc4f7a1bb"
+                },
+                {
+                    "type": "file",
+                    "only-arches": ["i386"],
+                    "url": "http://ftp.us.debian.org/debian/pool/main/d/dpkg/dpkg_1.19.0.5_i386.deb",
+                    "dest-filename": "dpkg.deb",
+                    "sha256": "149583499df5604cc9c0df0816c4add1a492cbd4dc308f7728de3217f37138a5"
+                },
+                {
+                    "type": "file",
+                    "only-arches": ["armhf"],
+                    "url": "http://ftp.us.debian.org/debian/pool/main/d/dpkg/dpkg_1.19.0.5_armhf.deb",
+                    "dest-filename": "dpkg.deb",
+                    "sha256": "bf6e9878ee601436a46a0b32d255754c19bfd13fcb57b40592d4a47fffca0d68"
+                },
+                {
+                    "type": "file",
+                    "only-arches": ["aarch64"],
+                    "url": "http://ftp.us.debian.org/debian/pool/main/d/dpkg/dpkg_1.19.0.5_arm64.deb",
+                    "dest-filename": "dpkg.deb",
+                    "sha256": "7bb31963d06a378f95f182cb521f6cca7870bc03c2a91044baf708892465f289"
+                }
+            ]
+        },
+        {
+            "name": "libselinux",
+            "buildsystem": "simple",
+            "build-commands": [
+                "ar vx selinux.deb",
+                "tar xJvf data.tar.xz",
+                "cp -dr lib/*-linux-gnu/* $FLATPAK_DEST/lib/"
+            ],
+            "sources": [
+                {
+                    "type": "file",
+                    "only-arches": ["x86_64"],
+                    "url": "http://ftp.us.debian.org/debian/pool/main/libs/libselinux/libselinux1_2.7-2+b2_amd64.deb",
+                    "dest-filename": "selinux.deb",
+                    "sha256": "2dc32e6a76a70696281098160b8724aa9ee9182a296d79c41d9fcd52b3bf6b9d"
+                },
+                {
+                    "type": "file",
+                    "only-arches": ["i386"],
+                    "url": "http://ftp.us.debian.org/debian/pool/main/libs/libselinux/libselinux1_2.7-2+b2_i386.deb",
+                    "dest-filename": "selinux.deb",
+                    "sha256": "10321d4dbd2f458af619b02bc1cade0bf88590332415807506d10b70063a003d"
+                },
+                {
+                    "type": "file",
+                    "only-arches": ["armhf"],
+                    "url": "http://ftp.us.debian.org/debian/pool/main/libs/libselinux/libselinux1_2.7-2+b2_armhf.deb",
+                    "dest-filename": "selinux.deb",
+                    "sha256": "26106d3f85010c4e5f25ea6e10c51588054c6dcf33604b24f80f86a52c1775ed"
+                },
+                {
+                    "type": "file",
+                    "only-arches": ["aarch64"],
+                    "url": "http://ftp.us.debian.org/debian/pool/main/libs/libselinux/libselinux1_2.7-2+b2_arm64.deb",
+                    "dest-filename": "selinux.deb",
+                    "sha256": "2739b3ec55d2539d984bf8ea741c5ed62def245d17b455f8ca89b40a0bfaa125"
+                }
+            ]
+        },
+        {
+            "name": "libpcre",
+            "buildsystem": "simple",
+            "build-commands": [
+                "ar vx pcre.deb",
+                "tar xJvf data.tar.xz",
+                "cp -dr lib/*-linux-gnu/* $FLATPAK_DEST/lib/",
+                "cp -dr usr/lib/*-linux-gnu/* $FLATPAK_DEST/lib/"
+            ],
+            "sources": [
+                {
+                    "type": "file",
+                    "only-arches": ["x86_64"],
+                    "url": "http://ftp.us.debian.org/debian/pool/main/p/pcre3/libpcre3_8.39-9_amd64.deb",
+                    "dest-filename": "pcre.deb",
+                    "sha256": "db2d62d62df01bd64ced9cecdb13ee18c1ad326a0222d26247465839cc572fea"
+                },
+                {
+                    "type": "file",
+                    "only-arches": ["i386"],
+                    "url": "http://ftp.us.debian.org/debian/pool/main/p/pcre3/libpcre3_8.39-9_i386.deb",
+                    "dest-filename": "pcre.deb",
+                    "sha256": "2c43fef689fcc7e9e43735a72ec6f50e473625e69b4548f38f4eafc88acc29b3"
+                },
+                {
+                    "type": "file",
+                    "only-arches": ["armhf"],
+                    "url": "http://ftp.us.debian.org/debian/pool/main/p/pcre3/libpcre3_8.39-9_armhf.deb",
+                    "dest-filename": "pcre.deb",
+                    "sha256": "ce77a561553bbc0e198420c807f1c756897f5043469b5987c8452995bb2f8cb4"
+                },
+                {
+                    "type": "file",
+                    "only-arches": ["aarch64"],
+                    "url": "http://ftp.us.debian.org/debian/pool/main/p/pcre3/libpcre3_8.39-9_arm64.deb",
+                    "dest-filename": "pcre.deb",
+                    "sha256": "c766ea7b1ce330e76be06005935a8b5ff894022d147be69047a90116577368fc"
+                }
+            ]
+        },
+        {
+            "name": "ca-certificates-java",
+            "buildsystem": "simple",
+            "build-commands": [
+                "ar vx ca-certificates-java.deb",
+                "tar xJvf data.tar.xz",
+                "cp -dr usr/* $FLATPAK_DEST",
+                "tar xzvf control.tar.gz",
+                "mkdir -p $FLATPAK_DEST/etc/default",
+                "echo \"cacerts_updates=yes\" > $FLATPAK_DEST/etc/default/cacerts",
+                "mkdir -p /etc/ssl/certs/java",
+                "patch -p0 < ca-certificates-java-hardcode-nsspkg.patch",
+                "JAVA_HOME=$FLATPAK_DEST/lib/jvm/java-1.8.0-openjdk-amd64/ PATH=$PATH:/usr/lib/jvm/java-1.8.0-openjdk-amd64/bin bash postinst configure",
+                "JAVA_HOME=$FLATPAK_DEST/lib/jvm/java-1.8.0-openjdk-amd64/ PATH=$PATH:/usr/lib/jvm/java-1.8.0-openjdk-amd64/bin update-ca-certificates -f",
+                "rm $FLATPAK_DEST/lib/jvm/java-1.8.0-openjdk-amd64/jre/lib/security/cacerts",
+                "cp /etc/ssl/certs/java/cacerts $FLATPAK_DEST/lib/jvm/java-1.8.0-openjdk-amd64/jre/lib/security/cacerts",
+                "ls -la $FLATPAK_DEST/lib/jvm/java-1.8.0-openjdk-amd64/jre/lib/security/cacerts"
+            ],
+            "sources": [
+                {
+                    "type": "file",
+                    "url": "http://ftp.us.debian.org/debian/pool/main/c/ca-certificates-java/ca-certificates-java_20140324_all.deb",
+                    "dest-filename": "ca-certificates-java.deb",
+                    "sha256": "86e20ad98bb0cecf4bfda6cc1ac95b75c87c6677dff00b599e5110ec3b3580eb"
+                },
+                {
+                    "type": "file",
+                    "path": "patches/ca-certificates-java-hardcode-nsspkg.patch"
+                }
+            ]
+        },
+        "org.tensorglow.TensorGlow.Dependencies.json",
+        {
+            "name": "tensorflow",
+            "buildsystem": "simple",
+            "build-commands": [
+                "./force-python-home.sh",
+                "patch -p0 < tensorflow-local-dependency.patch",
+                "patch -p1 < tensorflow-build-dependencies.patch",
+                "patch -p0 < tensorflow-repo-disable-mirror-check.patch",
+                "patch -p0 < tensorflow-disambiguate-jpeg-dep.patch",
+                "mkdir -p /usr/src/tensorflow",
+                "mv * /usr/src/tensorflow",
+                "mkdir -p /usr/build/tensorflow",
+                "cd /usr/src/tensorflow; ./tensorflow-configure-env.sh ./configure",
+                "cd /usr/src/tensorflow; ./build-tensorflow.sh //tensorflow/cc:tutorials_example_trainer /usr/build/tensorflow"
+            ],
+            "sources": [
+                {
+                    "type": "file",
+                    "path": "patches/tensorflow-local-dependency.patch"
+                },
+                {
+                    "type": "file",
+                    "path": "patches/tensorflow-build-dependencies.patch"
+                },
+                {
+                    "type": "file",
+                    "path": "patches/tensorflow-repo-disable-mirror-check.patch"
+                },
+                {
+                    "type": "file",
+                    "path": "patches/tensorflow-disambiguate-jpeg-dep.patch"
+                },
+                {
+                    "type": "file",
+                    "path": "scripts/tensorflow-configure-env.sh"
+                },
+                {
+                    "type": "file",
+                    "path": "scripts/build-tensorflow.sh"
+                },
+                {
+                    "type": "file",
+                    "path": "scripts/force-python-home.sh"
+                },
+                {
+                    "type": "archive",
+                    "url": "https://github.com/tensorflow/tensorflow/archive/v1.7.0.tar.gz",
+                    "sha256": "c676a96fc8700722816b2b98c85578b2f99fac7a7b2484c9c7f0641484f8d50d"
+                }
+            ]
+        }
+    ]
+}

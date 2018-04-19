@@ -1,0 +1,11 @@
+--- compile.sh	1980-01-01 08:00:00.000000000 +0800
++++ compile.sh	2018-04-18 04:52:15.416971143 +0800
+@@ -95,6 +95,8 @@ log "Building output/bazel"
+ bazel_build "src:bazel${EXE_EXT}" \
+   --host_platform=//tools/platforms:host_platform \
+   --platforms=//tools/platforms:target_platform \
++  --action_env=PYTHONNOUSERSITE \
++  --action_env=HOME \
+   || fail "Could not build Bazel"
+ bazel_bin_path="$(get_bazel_bin_path)/src/bazel${EXE_EXT}"
+ [ -e "$bazel_bin_path" ] \
